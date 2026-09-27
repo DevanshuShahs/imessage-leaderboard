@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reaction Leaderboard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <h1 class="app-title">Reaction Leaderboard</h1>
+        <p class="app-subtitle">See who gets the most iMessage tapbacks in your group chats.</p>
+      </div>
+      <div id="search-wrap" class="search-wrap" hidden>
+        <svg class="search-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/>
+          <line x1="13.1" y1="13.1" x2="18" y2="18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <input
+          id="chat-search"
+          type="text"
+          placeholder="Search group chats…"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <div id="search-results" class="search-results" hidden></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <section id="upload-panel" class="upload-panel">
+      <p class="privacy-notice">
+        <span class="icon">🔒</span>
+        <span>Everything runs in your browser. Your database and contacts file are
+        never uploaded anywhere - all the analysis happens on your own device.</span>
+      </p>
+
+      <div class="upload-field">
+        <label for="db-file">
+          iMessage database
+          <span class="hint">a copy of ~/Library/Messages/chat.db - required</span>
+        </label>
+        <input type="file" id="db-file" accept=".db,.sqlite,.sqlite3" />
+        <details class="how-to">
+          <summary>How do I get this file?</summary>
+          <p>This only works from a <strong>Mac</strong> - iMessage history lives in
+          macOS, not on an iPhone directly.</p>
+          <ol>
+            <li>Open <strong>Terminal</strong> (Applications → Utilities → Terminal).</li>
+            <li>Grant it access: <strong>System Settings → Privacy &amp; Security →
+              Full Disk Access</strong> → turn on Terminal → quit and reopen Terminal.</li>
+            <li>Quit the <strong>Messages</strong> app completely (⌘Q).</li>
+            <li>Run this command to make a safe copy on your Desktop:
+              <pre>cp ~/Library/Messages/chat.db ~/Desktop/chat_copy.db</pre>
+            </li>
+            <li>Upload <code>chat_copy.db</code> from your Desktop above.</li>
+          </ol>
+          <p class="note">This copies your file - it never modifies or deletes your
+          real Messages data.</p>
+        </details>
+      </div>
+
+      <div class="upload-field">
+        <label for="vcf-file">
+          Contacts export (.vcf)
+          <span class="hint">optional - lets names show up instead of raw numbers</span>
+        </label>
+        <input type="file" id="vcf-file" accept=".vcf" />
+        <details class="how-to">
+          <summary>How do I get this file?</summary>
+          <p><strong>On a Mac:</strong> open the <strong>Contacts</strong> app → Edit
+          menu → Select All → File → Export → Export vCard.</p>
+          <p><strong>On an iPhone:</strong> go to
+          <a href="https://icloud.com/contacts" target="_blank" rel="noopener">icloud.com/contacts</a>
+          in a browser and sign in → select all contacts (⌘A / click one, then
+          Select All) → click the gear icon in the bottom-left corner → Export vCard.</p>
+          <p><strong>Google Contacts:</strong> go to
+          <a href="https://contacts.google.com" target="_blank" rel="noopener">contacts.google.com</a>
+          → select contacts → Export → choose vCard format.</p>
+          <p><strong>Android:</strong> open the Contacts app → menu → Settings →
+          Export → export as a .vcf file.</p>
+        </details>
+      </div>
+
+      <button id="analyze-btn" class="primary-btn" disabled>Analyze</button>
+      <p id="upload-error" class="upload-error" hidden></p>
+    </section>
+
+    <div id="empty-state" class="state-panel" hidden>
+      <p>Search for a group chat above to see its reaction leaderboard.</p>
+    </div>
+
+    <div id="loading-state" class="state-panel" hidden>
+      <div class="spinner" aria-hidden="true"></div>
+      <p id="loading-label">Loading…</p>
+    </div>
+
+    <div id="error-state" class="state-panel error-panel" hidden>
+      <p id="error-message"></p>
+    </div>
+
+    <div id="results" class="results" hidden>
+      <section class="chat-header">
+        <div>
+          <h2 id="chat-name"></h2>
+          <div class="chat-stats">
+            <div class="stat">
+              <span id="stat-participants" class="stat-value">–</span>
+              <span class="stat-label">Participants</span>
+            </div>
+            <div class="stat">
+              <span id="stat-messages" class="stat-value">–</span>
+              <span class="stat-label">Messages</span>
+            </div>
+            <div class="stat">
+              <span id="stat-reactions" class="stat-value">–</span>
+              <span class="stat-label">Reactions</span>
+            </div>
+          </div>
+        </div>
+        <button id="csv-btn" class="secondary-btn">Download CSV</button>
+      </section>
+
+      <section id="leaderboard" class="leaderboard"></section>
+    </div>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
